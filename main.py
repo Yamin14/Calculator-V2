@@ -24,7 +24,7 @@ class Calculator(GridLayout):
 					self.x = 70
 					self.y += 150
 					
-		for i in range(10, 20):
+		for i in range(10, 21):
 			if i == 10:
 				self.text = "."
 			elif i == 11:
@@ -34,9 +34,9 @@ class Calculator(GridLayout):
 			elif i == 13:
 				self.text = "-"
 			elif i == 14:
-				self.text = "*"
+				self.text = "×"
 			elif i == 15:
-				self.text = "/"
+				self.text = "÷"
 			elif i == 16:
 				self.text = "Clear"
 			elif i == 17:
@@ -45,6 +45,8 @@ class Calculator(GridLayout):
 				self.text = "("
 			elif i == 19:
 				self.text = ")"
+			elif i == 20:
+				self.text = "^"
 				
 			self.buttons.append(Button(text=self.text, background_color=self.bg, color=self.fg, size=(self.width, self.height), font_size=self.font_size))
 			
@@ -59,13 +61,14 @@ class Calculator(GridLayout):
 		self.buttons[17].pos = (370, 750)
 		self.buttons[18].pos = (220, 850)
 		self.buttons[19].pos = (370, 850)
+		self.buttons[20].pos = (70, 850)
 		
 		self.buttons[16].size = (300, 100)
 		self.buttons[17].size = (300, 100)
 		
-		for i in range(20):
+		for i in range(21):
 			self.add_widget(self.buttons[i])
-			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear":
+			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear" and self.buttons[i].text != "^" and self.buttons[i].text != "÷" and self.buttons[i].text != "×":
 				self.buttons[i].bind(on_press=self.pressed)
 			elif self.buttons[i].text == "Delete":
 				self.buttons[i].bind(on_press=self.delete)
@@ -73,6 +76,12 @@ class Calculator(GridLayout):
 				self.buttons[i].bind(on_press=self.clear)
 			elif self.buttons[i].text == "=":
 				self.buttons[i].bind(on_press=self.equal)
+			elif self.buttons[i].text == "^":
+				self.buttons[i].bind(on_press=self.power)
+			elif self.buttons[i].text == "÷":
+				self.buttons[i].bind(on_press=self.divide)
+			elif self.buttons[i].text == "×":
+				self.buttons[i].bind(on_press=self.multiply)
 			
 		self.input_label = Label(text="", color=self.fg, pos=(320, 1200), font_size=40)
 		self.add_widget(self.input_label)
@@ -89,9 +98,19 @@ class Calculator(GridLayout):
 	def clear(self, instance):
 		self.input_label.text = ""
 		
+	def power(self, instance):
+		self.input_label.text += "**"
+		
+	def multiply(self, instance):
+		self.input_label.text += "*"
+		
+	def divide(self, instance):
+		self.input_label.text += "/"
+		
 	def equal(self, instance):
+		self.expression = self.input_label.text
 		try:
-			self.answer = eval(self.input_label.text)
+			self.answer = eval(self.expression)
 		except:
 			self.answer = "ERROR"
 			

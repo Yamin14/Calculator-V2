@@ -3,6 +3,7 @@ from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
+from math import *
 
 class Calculator(GridLayout):
 	def __init__(self, **kwargs):
@@ -24,7 +25,7 @@ class Calculator(GridLayout):
 					self.x = 70
 					self.y += 150
 					
-		for i in range(10, 21):
+		for i in range(10, 22):
 			if i == 10:
 				self.text = "."
 			elif i == 11:
@@ -47,6 +48,8 @@ class Calculator(GridLayout):
 				self.text = ")"
 			elif i == 20:
 				self.text = "^"
+			elif i == 21:
+				self.text = "!"
 				
 			self.buttons.append(Button(text=self.text, background_color=self.bg, color=self.fg, size=(self.width, self.height), font_size=self.font_size))
 			
@@ -62,13 +65,14 @@ class Calculator(GridLayout):
 		self.buttons[18].pos = (220, 850)
 		self.buttons[19].pos = (370, 850)
 		self.buttons[20].pos = (70, 850)
+		self.buttons[21].pos = (520, 850)
 		
 		self.buttons[16].size = (300, 100)
 		self.buttons[17].size = (300, 100)
 		
-		for i in range(21):
+		for i in range(22):
 			self.add_widget(self.buttons[i])
-			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear" and self.buttons[i].text != "^" and self.buttons[i].text != "÷" and self.buttons[i].text != "×":
+			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear" and self.buttons[i].text != "^" and self.buttons[i].text != "÷" and self.buttons[i].text != "×" and self.buttons[i].text != "!":
 				self.buttons[i].bind(on_press=self.pressed)
 			elif self.buttons[i].text == "Delete":
 				self.buttons[i].bind(on_press=self.delete)
@@ -82,6 +86,8 @@ class Calculator(GridLayout):
 				self.buttons[i].bind(on_press=self.divide)
 			elif self.buttons[i].text == "×":
 				self.buttons[i].bind(on_press=self.multiply)
+			if self.buttons[i].text == "!":
+				self.buttons[i].bind(on_press=self.fact)
 			
 		self.input_label = Label(text="", color=self.fg, pos=(320, 1200), font_size=40)
 		self.add_widget(self.input_label)
@@ -107,9 +113,34 @@ class Calculator(GridLayout):
 	def divide(self, instance):
 		self.input_label.text += "/"
 		
-	def equal(self, instance):
-		self.expression = self.input_label.text
+	def fact(self, instance):
+		self.input_label.text += "!"
+		self.num = ""
+		self.i = self.input_label.text.index("!")
+
+		while "+" not in self.num and "-" not in self.num and "*" not in self.num and "/" not in self.num and "(" not in self.num and ")" not in self.num and self.i >= 0:
+			self.i -= 1
+			self.num += self.input_label.text[self.i]
+			
+		if self.i < 0:
+			self.num = self.num[:-1] 
+		self.num = self.num[::-1]
 		try:
+			self.num = int(self.num)
+			
+			self.fact_ans = str(factorial(self.num))
+			self.start_pos = self.i + 1
+			self.end_pos = self.input_label.text.index("!")
+		except:
+			pass
+		
+	def equal(self, instance):
+		try:
+			if "!" not in self.input_label.text:
+				self.expression = self.input_label.text
+			else:
+				self.expression = self.input_label.text[:self.start_pos] + self.fact_ans + self.input_label.text[self.end_pos+1:]
+			
 			self.answer = eval(self.expression)
 		except:
 			self.answer = "ERROR"

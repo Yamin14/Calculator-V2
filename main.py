@@ -25,7 +25,7 @@ class Calculator(GridLayout):
 					self.x = 20
 					self.y += 150
 					
-		for i in range(10, 26):
+		for i in range(10, 27):
 			if i == 10:
 				self.text = "."
 			elif i == 11:
@@ -58,6 +58,8 @@ class Calculator(GridLayout):
 				self.text = "tan("
 			elif i == 25:
 				self.text = "π"
+			elif i == 26:
+				self.text = "e"
 		
 			self.buttons.append(Button(text=self.text, background_color=self.bg, color=self.fg, size=(self.width, self.height), font_size=self.font_size))
 			
@@ -78,6 +80,7 @@ class Calculator(GridLayout):
 		self.buttons[23].pos = (220, 900)
 		self.buttons[24].pos = (420, 900)
 		self.buttons[25].pos = (620, 50)
+		self.buttons[26].pos = (620, 200)
 		
 		self.buttons[16].size = (300, 100)
 		self.buttons[17].size = (300, 100)
@@ -85,10 +88,11 @@ class Calculator(GridLayout):
 		self.buttons[23].size = (200, 100)
 		self.buttons[24].size = (200, 100)
 		self.buttons[25].size = (100, 150)
+		self.buttons[26].size = (100, 150)
 		
-		for i in range(26):
+		for i in range(27):
 			self.add_widget(self.buttons[i])
-			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear" and self.buttons[i].text != "^" and self.buttons[i].text != "÷" and self.buttons[i].text != "×" and self.buttons[i].text != "!" and self.buttons[i].text != "sin(" and self.buttons[i].text != "cos(" and self.buttons[i].text != "tan(":
+			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear":
 				self.buttons[i].bind(on_press=self.pressed)
 			elif self.buttons[i].text == "Delete":
 				self.buttons[i].bind(on_press=self.delete)
@@ -96,20 +100,6 @@ class Calculator(GridLayout):
 				self.buttons[i].bind(on_press=self.clear)
 			elif self.buttons[i].text == "=":
 				self.buttons[i].bind(on_press=self.equal)
-			elif self.buttons[i].text == "^":
-				self.buttons[i].bind(on_press=self.power)
-			elif self.buttons[i].text == "÷":
-				self.buttons[i].bind(on_press=self.divide)
-			elif self.buttons[i].text == "×":
-				self.buttons[i].bind(on_press=self.multiply)
-			elif self.buttons[i].text == "sin(":
-				self.buttons[i].bind(on_press=self.trig)
-			elif self.buttons[i].text == "cos(":
-				self.buttons[i].bind(on_press=self.trig)
-			elif self.buttons[i].text == "tan(":
-				self.buttons[i].bind(on_press=self.trig)
-			if self.buttons[i].text == "!":
-				self.buttons[i].bind(on_press=self.fact)
 			
 		self.input_label = Label(text="", color=self.fg, pos=(320, 1200), font_size=40)
 		self.add_widget(self.input_label)
@@ -126,53 +116,24 @@ class Calculator(GridLayout):
 	def clear(self, instance):
 		self.input_label.text = ""
 		
-	def power(self, instance):
-		self.input_label.text += "**"
-		
-	def multiply(self, instance):
-		self.input_label.text += "*"
-		
-	def divide(self, instance):
-		self.input_label.text += "/"
-		
-	def fact(self, instance):
-		self.input_label.text += "!"
-		self.num = ""
-		self.i = self.input_label.text.index("!")
-
-		while "+" not in self.num and "-" not in self.num and "*" not in self.num and "/" not in self.num and "(" not in self.num and ")" not in self.num and "!" not in self.num and self.i >= 0:
-			self.i -= 1
-			self.num += self.input_label.text[self.i]
-			
-		if self.i < 0:
-			self.num = self.num[:-1] 
-		self.num = self.num[::-1]
-		try:
-			self.num = int(self.num)
-			
-			self.fact_ans = str(factorial(self.num))
-			self.start_pos = self.i + 1
-			self.end_pos = self.input_label.text.index("!")
-			
-		except:
-			pass
-
-	def trig(self, instance):
-		pass
-		
 	def equal(self, instance):
 		try:
-			if "!" not in self.input_label.text:
-				self.expression = self.input_label.text
-			elif "!" in self.input_label.text:
-				self.expression = self.input_label.text[:self.start_pos] + self.fact_ans + self.input_label.text[self.end_pos+1:]
-				
-			if "π" in self.input_label.text:
-				pos = 0
-				for i in self.input_label.text:
-					if i == "π":
-						self.expression = self.input_label.text[:pos] + str(pi) + self.input_label.text[pos+1:]
-					pos += 1
+			self.expression = ""
+			pos = 0
+			for i in self.input_label.text:
+				if i == "π":
+					self.expression += str(pi)
+				elif i == "e":
+					self.expression += str(e)
+				elif i == "×":
+					self.expression += "*"
+				elif i == "÷":
+					self.expression += "/"
+				elif i == "^":
+					self.expression += "**"
+				else:
+					self.expression += i
+				pos += 1
 			
 			self.answer = eval(self.expression)
 		except:

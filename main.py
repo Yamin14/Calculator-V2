@@ -131,6 +131,18 @@ class Calculator(GridLayout):
 					self.expression += "/"
 				elif i == "^":
 					self.expression += "**"
+				elif i == "!":
+					temp = pos
+					value = ""
+					pos -= 1
+					while pos >= 0 and self.input_label.text[pos] != "-" and self.input_label.text[pos] != "+" and self.input_label.text[pos] != "×" and self.input_label.text[pos] != "÷" and self.input_label.text[pos] != "(" and self.input_label.text[pos] != ")" and self.input_label.text[pos] != "^":
+						value += self.input_label.text[pos]
+						pos -= 1
+						
+					value = value[::-1]
+					self.expression = self.expression[:pos]
+					self.expression += str(factorial(int(value)))
+					pos = temp	
 				else:
 					self.expression += i
 				pos += 1

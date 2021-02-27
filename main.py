@@ -25,7 +25,7 @@ class Calculator(GridLayout):
 					self.x = 20
 					self.y += 150
 					
-		for i in range(10, 27):
+		for i in range(10, 30):
 			if i == 10:
 				self.text = "."
 			elif i == 11:
@@ -60,6 +60,12 @@ class Calculator(GridLayout):
 				self.text = "π"
 			elif i == 26:
 				self.text = "e"
+			elif i == 27:
+				self.text = "ln("
+			elif i == 28:
+				self.text = "lg("
+			elif i == 29:
+				self.text = "Ans"
 		
 			self.buttons.append(Button(text=self.text, background_color=self.bg, color=self.fg, size=(self.width, self.height), font_size=self.font_size))
 			
@@ -79,8 +85,11 @@ class Calculator(GridLayout):
 		self.buttons[22].pos = (20, 900)
 		self.buttons[23].pos = (220, 900)
 		self.buttons[24].pos = (420, 900)
-		self.buttons[25].pos = (620, 50)
-		self.buttons[26].pos = (620, 200)
+		self.buttons[25].pos = (620, 200)
+		self.buttons[26].pos = (620, 350)
+		self.buttons[27].pos = (620, 500)
+		self.buttons[28].pos = (620, 650)
+		self.buttons[29].pos = (620, 50)
 		
 		self.buttons[16].size = (300, 100)
 		self.buttons[17].size = (300, 100)
@@ -89,10 +98,13 @@ class Calculator(GridLayout):
 		self.buttons[24].size = (200, 100)
 		self.buttons[25].size = (100, 150)
 		self.buttons[26].size = (100, 150)
+		self.buttons[27].size = (100, 150)
+		self.buttons[28].size = (100, 150)
+		self.buttons[29].size = (100, 150)
 		
-		for i in range(27):
+		for i in range(30):
 			self.add_widget(self.buttons[i])
-			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear":
+			if self.buttons[i].text != "=" and self.buttons[i].text != "Delete" and self.buttons[i].text != "Clear" and self.buttons[i].text != "Ans":
 				self.buttons[i].bind(on_press=self.pressed)
 			elif self.buttons[i].text == "Delete":
 				self.buttons[i].bind(on_press=self.delete)
@@ -100,6 +112,8 @@ class Calculator(GridLayout):
 				self.buttons[i].bind(on_press=self.clear)
 			elif self.buttons[i].text == "=":
 				self.buttons[i].bind(on_press=self.equal)
+			elif self.buttons[i].text == "Ans":
+				self.buttons[i].bind(on_press=self.ans)
 			
 		self.input_label = Label(text="", color=self.fg, pos=(320, 1200), font_size=40)
 		self.add_widget(self.input_label)
@@ -115,6 +129,9 @@ class Calculator(GridLayout):
 		
 	def clear(self, instance):
 		self.input_label.text = ""
+		
+	def ans(self, instance):
+		self.input_label.text += "Ans"
 		
 	def equal(self, instance):
 		try:
@@ -154,7 +171,12 @@ class Calculator(GridLayout):
 					pos += 4
 					value = ""
 					while self.input_label.text[pos] != ")":
-						value += self.input_label.text[pos]
+						if self.input_label.text[pos] == "π":
+							value += str(pi)
+						elif self.input_label.text[pos] == "e":
+							value += str(e)
+						else:
+							value += self.input_label.text[pos]
 						pos += 1
 					self.expression = self.expression[:temp-1]
 					self.expression += str(sin(radians(float(value))))
@@ -164,7 +186,12 @@ class Calculator(GridLayout):
 					pos += 4
 					value = ""
 					while self.input_label.text[pos] != ")":
-						value += self.input_label.text[pos]
+						if self.input_label.text[pos] == "π":
+							value += str(pi)
+						elif self.input_label.text[pos] == "e":
+							value += str(e)
+						else:
+							value += self.input_label.text[pos]
 						pos += 1
 					self.expression = self.expression[:pos]
 					self.expression += str(cos(radians(float(value))))
@@ -174,10 +201,49 @@ class Calculator(GridLayout):
 					pos += 4
 					value = ""
 					while self.input_label.text[pos] != ")":
-						value += self.input_label.text[pos]
+						if self.input_label.text[pos] == "π":
+							value += str(pi)
+						elif self.input_label.text[pos] == "e":
+							value += str(e)
+						else:
+							value += self.input_label.text[pos]
 						pos += 1
 					self.expression = self.expression[:temp-1]
 					self.expression += str(tan(radians(float(value))))
+					
+				elif i == "l" and self.input_label.text[pos+1] == "n":
+					temp = pos
+					pos += 3
+					value = ""
+					while self.input_label.text[pos] != ")":
+						if self.input_label.text[pos] == "π":
+							value += str(pi)
+						elif self.input_label.text[pos] == "e":
+							value += str(e)
+						else:
+							value += self.input_label.text[pos]
+						pos += 1
+					self.expression = self.expression[:temp-1]
+					self.expression += str(log((float(value))))
+					
+				elif i == "l" and self.input_label.text[pos+1] == "g":
+					temp = pos
+					pos += 3
+					value = ""
+					while self.input_label.text[pos] != ")":
+						if self.input_label.text[pos] == "π":
+							value += str(pi)
+						elif self.input_label.text[pos] == "e":
+							value += str(e)
+						else:
+							value += self.input_label.text[pos]
+						pos += 1
+					self.expression = self.expression[:temp-1]
+					self.expression += str(log10((float(value))))
+				
+				elif i == "A":
+					self.expression += self.result_label.text
+					pos += 2
 
 				else:
 					self.expression += i

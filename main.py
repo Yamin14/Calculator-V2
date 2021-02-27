@@ -120,7 +120,8 @@ class Calculator(GridLayout):
 		try:
 			self.expression = ""
 			pos = 0
-			for i in self.input_label.text:
+			while pos < len(self.input_label.text):
+				i = self.input_label.text[pos]
 				if i == "π":
 					self.expression += str(pi)
 				elif i == "e":
@@ -132,21 +133,56 @@ class Calculator(GridLayout):
 				elif i == "^":
 					self.expression += "**"
 				elif i == "!":
+					count = 0
 					temp = pos
 					value = ""
 					pos -= 1
 					while pos >= 0 and self.input_label.text[pos] != "-" and self.input_label.text[pos] != "+" and self.input_label.text[pos] != "×" and self.input_label.text[pos] != "÷" and self.input_label.text[pos] != "(" and self.input_label.text[pos] != ")" and self.input_label.text[pos] != "^":
 						value += self.input_label.text[pos]
+						count += 1
 						pos -= 1
-						
+					
 					value = value[::-1]
+					fact = factorial(int(value))
+					count = -1 * count 
+					self.expression = self.expression[:count]
+					self.expression += str(fact)
+					pos = temp
+
+				elif i == "s":
+					temp = pos
+					pos += 4
+					value = ""
+					while self.input_label.text[pos] != ")":
+						value += self.input_label.text[pos]
+						pos += 1
+					self.expression = self.expression[:temp-1]
+					self.expression += str(sin(radians(float(value))))
+					
+				elif i == "c":
+					temp = pos
+					pos += 4
+					value = ""
+					while self.input_label.text[pos] != ")":
+						value += self.input_label.text[pos]
+						pos += 1
 					self.expression = self.expression[:pos]
-					self.expression += str(factorial(int(value)))
-					pos = temp	
+					self.expression += str(cos(radians(float(value))))
+					
+				elif i == "t":
+					temp = pos
+					pos += 4
+					value = ""
+					while self.input_label.text[pos] != ")":
+						value += self.input_label.text[pos]
+						pos += 1
+					self.expression = self.expression[:temp-1]
+					self.expression += str(tan(radians(float(value))))
+
 				else:
 					self.expression += i
 				pos += 1
-			
+				
 			self.answer = eval(self.expression)
 		except:
 			self.answer = "ERROR"
